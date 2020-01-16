@@ -29,6 +29,7 @@
         <module>paraflow-examples</module>
         <module>paraflow-benchmark</module>
         <module>paraflow-client</module>
+        <module>paraflow-kafka</module>
     </modules>
     <packaging>pom</packaging>
 
