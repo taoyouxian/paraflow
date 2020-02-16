@@ -13,15 +13,12 @@ KAFKA_DIR="/home/iir/opt/kafka_2.11-1.1.1"
 # deployment
 deploy()
 {
-  if [ $(id -u) != "0" ]; then
-    echo "please run $0 $1 in root."
-    exit 0
-  fi
   for ((i=$START; i<=$END; i++))
   do
     echo "deploy kafka on dbiir0"$i
-    scp -r $KAFKA_DIR $PREFIX"0"$i:$KAFKA_DIR
-    ssh $PREFIX"0"$i "chown iir:iir $KAFKA_DIR"
+ # transfer by other scripts
+ #   scp -r $KAFKA_DIR $PREFIX"0"$i:$KAFKA_DIR
+ #   ssh $PREFIX"0"$i "chown iir:iir $KAFKA_DIR"
     ssh $PREFIX"0"$i "$KAFKA_DIR/sbin/kafka-init.sh"
   done
 }
@@ -59,6 +56,11 @@ cleanup()
 # destroy
 destroy()
 {
+   if [ $(id -u) != "0" ]; then
+     echo "please run $0 $1 in root."
+     echo "notice: this is very dangerous"
+     exit 0
+   fi
   for ((i=$START; i<=$END; i++))
   do
     echo "destroy kafka on dbiir0"$i
