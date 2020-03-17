@@ -16,6 +16,11 @@ public class BasicLoader
 
     public static void main(String[] args)
     {
+        beginLoader(args);
+    }
+
+    public static void beginLoader(String[] args)
+    {
         String db = args[0];
         String table = args[1];
         int partitionFrom = Integer.parseInt(args[2]);

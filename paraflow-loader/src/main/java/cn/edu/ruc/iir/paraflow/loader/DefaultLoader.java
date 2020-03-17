@@ -69,7 +69,14 @@ public class DefaultLoader
             pullerParallelism = config.getPullerParallelism();
         }
         // get topic
-        String topic = db + "-" + table;
+//        String topic = db + "." + table;
+        String topic = null;
+        if (config.getProperties().getProperty("topic.mid") == null) {
+            topic = db + config.getProperties().getProperty("topic.mid") + table;
+        }
+        else {
+            topic = db + "." + table;
+        }
         // assign topic partitions to each data puller
         checkArgument(partitionTo >= partitionFrom);
         int partitionNum = partitionTo - partitionFrom + 1;

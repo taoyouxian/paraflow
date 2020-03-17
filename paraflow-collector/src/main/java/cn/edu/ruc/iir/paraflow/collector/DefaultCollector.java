@@ -4,15 +4,18 @@ import cn.edu.ruc.iir.paraflow.collector.utils.CollectorConfig;
 import cn.edu.ruc.iir.paraflow.commons.ParaflowFiberPartitioner;
 import cn.edu.ruc.iir.paraflow.commons.exceptions.ConfigFileNotFoundException;
 import cn.edu.ruc.iir.paraflow.commons.proto.StatusProto;
+import cn.edu.ruc.iir.paraflow.commons.utils.DateUtil;
 import cn.edu.ruc.iir.paraflow.metaserver.client.MetaClient;
 import cn.edu.ruc.iir.paraflow.metaserver.proto.MetaProto;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.KafkaFuture;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -46,6 +49,7 @@ public class DefaultCollector<T>
         properties.setProperty("client.id", "producerAdmin");
         properties.setProperty("metadata.max.age.ms", "3000");
         kafkaAdminClient = AdminClient.create(properties);
+        System.out.println("Collector Properties:" + properties.toString());
         this.collectorRuntime = new CollectorRuntime(config);
         init();
     }
@@ -67,6 +71,7 @@ public class DefaultCollector<T>
                         MessageSerializationSchema<T> serializer,
                         DataSink dataSink)
     {
+        System.out.println("Collector Stared:" + DateUtil.formatTime(new Date()));
         DataFlow<T> dataFlow = env.addSource(dataSource);
         FiberFlow<T> fiberFlow = dataFlow
                 .keyBy(keyIdx)
@@ -74,6 +79,11 @@ public class DefaultCollector<T>
                 .sink(dataSink)
                 .partitionBy(partitioner);
         collectorRuntime.run(fiberFlow);
+    }
+
+    public void sendMsgToTopic(String topicName, ProducerRecord<byte[], byte[]> record, int length)
+    {
+        collectorRuntime.sendMsgToTopic(topicName, record, length);
     }
 
     @Override
@@ -91,9 +101,11 @@ public class DefaultCollector<T>
         CreateTopicsResult result = kafkaAdminClient.createTopics(Collections.singletonList(newTopic));
         KafkaFuture future = result.values().get(topicName);
         try {
+            System.out.println("Topic[" + topicName + "] Created Successfully.");
             future.get();
         }
         catch (InterruptedException | ExecutionException e) {
+            System.out.println("Topic[" + topicName + "] Created Failed.");
             e.printStackTrace();
         }
     }
@@ -181,6 +193,7 @@ public class DefaultCollector<T>
     {
         try {
             Set<String> topics = kafkaAdminClient.listTopics().names().get();
+            System.out.println("Collector Topics Num:" + topics.size() + "\n" + topics.toString());
             return topics.contains(topic);
         }
         catch (InterruptedException | ExecutionException e) {

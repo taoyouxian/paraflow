@@ -1,6 +1,8 @@
 package cn.edu.ruc.iir.paraflow.loader;
 
 import cn.edu.ruc.iir.paraflow.commons.ParaflowRecord;
+import cn.edu.ruc.iir.paraflow.commons.exceptions.ConfigFileNotFoundException;
+import cn.edu.ruc.iir.paraflow.loader.utils.LoaderConfig;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -37,6 +39,7 @@ public class DataPuller
                int sortedBufferCapacity)
     {
         super(threadName, db, table, parallelism);
+        System.out.println("TopicPartitions:" + topicPartitions.toString());
         ParaflowKafkaConsumer kafkaConsumer = new ParaflowKafkaConsumer(topicPartitions, conf);
         this.consumer = kafkaConsumer.getConsumer();
         this.blockingQueue = blockingQueue;
@@ -68,13 +71,27 @@ public class DataPuller
             logger.error("No data transformer available.");
             return;
         }
+        LoaderConfig config = LoaderConfig.INSTANCE();
+        try {
+            config.init();
+        }
+        catch (ConfigFileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Properties properties = config.getProperties();
+        long time = 1000;
+        if (properties.getProperty("pull.time") != null) {
+            time = Long.parseLong(properties.getProperty("pull.time"));
+        }
         System.out.println(super.name + " started.");
         logger.info(super.name + " started.");
         while (!isReadyToStop.get()) {
             try {
                 ConsumerRecords<byte[], byte[]> records = consumer.poll(100);
+                System.out.println("TopicPartition:" + records.partitions());
                 for (TopicPartition topicPartition : records.partitions()) {
                     int partition = topicPartition.partition();
+                    System.out.println("Records:" + records.records(topicPartition).size());
                     for (ConsumerRecord<byte[], byte[]> record : records.records(topicPartition)) {
                         int partitionIndex = fiberMapping.get(partition);
                         int fiberIndex = fiberIndices[partitionIndex];

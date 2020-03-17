@@ -10,6 +10,165 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>paraflow-kafka</artifactId>
+    <description>Presto - Paraflow Kafka Connector</description>
+    <packaging>presto-plugin</packaging>
 
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.facebook.presto</groupId>
+            <artifactId>presto-spi</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.facebook.presto</groupId>
+            <artifactId>presto-plugin-toolkit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.facebook.presto.hive</groupId>
+            <artifactId>hive-apache</artifactId>
+            <version>1.2.0-2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jol</groupId>
+            <artifactId>jol-core</artifactId>
+            <version>0.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.8.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.facebook.presto.hadoop</groupId>
+            <artifactId>hadoop-apache2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.6-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>bootstrap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>configuration</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>log</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.facebook.presto</groupId>
+            <artifactId>presto-record-decoder</artifactId>
+            <version>0.192</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>slice</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.airlift</groupId>
+            <artifactId>units</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>2.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.10</artifactId>
+            <version>0.8.2.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
+            <version>0.8.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.edu.ruc.iir</groupId>
+            <artifactId>paraflow-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.edu.ruc.iir</groupId>
+            <artifactId>paraflow-metaserver</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.airlift.tpch</groupId>
+            <artifactId>tpch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.edu.ruc.iir</groupId>
+            <artifactId>paraflow-benchmark</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.edu.ruc.iir</groupId>
+            <artifactId>paraflow-examples</artifactId>
+            <version>1.0-alpha1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+        </plugins>
+    </build>
 </project>

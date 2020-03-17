@@ -4,8 +4,10 @@ import cn.edu.ruc.iir.paraflow.collector.DataSource;
 import cn.edu.ruc.iir.paraflow.collector.DefaultCollector;
 import cn.edu.ruc.iir.paraflow.collector.StringMessageSerializationSchema;
 import cn.edu.ruc.iir.paraflow.commons.exceptions.ConfigFileNotFoundException;
+import cn.edu.ruc.iir.paraflow.commons.utils.DateUtil;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import static cn.edu.ruc.iir.paraflow.benchmark.model.LineOrderColumn.CLERK;
 import static cn.edu.ruc.iir.paraflow.benchmark.model.LineOrderColumn.COMMIT_DATE;
@@ -48,6 +50,11 @@ public class BasicCollector
             System.out.println("Usage: dbName tableName parallelism partitionNum sf part partCount minCustKey maxCustKey, part starts from 1");
             System.exit(-1);
         }
+        beginCollector(args);
+    }
+
+    public static void beginCollector(String[] args)
+    {
         String dbName = args[0];
         String tableName = args[1];
         int parallelism = Integer.parseInt(args[2]);
@@ -115,11 +122,24 @@ public class BasicCollector
                         "cn.edu.ruc.iir.paraflow.examples.collector.BasicParaflowFiberPartitioner",
                         Arrays.asList(names), Arrays.asList(types));
             }
-            if (!collector.existsTopic(dbName + "-" + tableName)) {
-                collector.createTopic(dbName + "-" + tableName, partitionNum, (short) 1);
+            System.out.println("Collector Topic:" + DateUtil.formatTime(new Date()));
+            String topicName = dbName + "." + tableName;
+            if (!collector.existsTopic(topicName)) {
+                System.out.println("Topic [" + topicName + "] being deleted.");
+                collector.deleteTopic(topicName);
+                try {
+                    Thread.sleep(3 * 1000);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (!collector.existsTopic(topicName)) {
+                collector.createTopic(topicName, partitionNum, (short) 1);
             }
 
             for (int i = 0; i < parallelism; i++) {
+                System.out.println("Collector Thread:" + i + "/" + parallelism);
                 DataSource dataSource = new TpchDataSource(sf, part, partCount, minCustKey, maxCustKey);
                 collector.collect(dataSource, 1, 22,
                         new BasicParaflowFiberPartitioner(partitionNum),

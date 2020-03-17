@@ -41,11 +41,18 @@ public class TpchDataSource
     {
         if (lineOrderIterator.hasNext()) {
             LineOrder lineOrder = lineOrderIterator.next();
-            kryo.writeObject(output, lineOrder);
-            Message message = new Message(BytesUtils.toBytes((int) lineOrder.getCustomerKey()),
+            Message message = null;
+            try {
+                kryo.writeObject(output, lineOrder);
+                message = new Message(BytesUtils.toBytes((int) lineOrder.getCustomerKey()),
                     output.toBytes(),
                     lineOrder.getCreation());
-            output.reset();
+                output.reset();
+            }
+            catch (Exception e) {
+                System.out.println("Producer Msg Kryo Error.");
+                e.printStackTrace();
+            }
             return message;
         }
         return null;

@@ -1,6 +1,10 @@
 package cn.edu.ruc.iir.paraflow.benchmark.generator;
 
 import cn.edu.ruc.iir.paraflow.benchmark.model.LineOrder;
+import cn.edu.ruc.iir.paraflow.commons.FileUtils;
+import cn.edu.ruc.iir.paraflow.commons.exceptions.ConfigFileNotFoundException;
+import cn.edu.ruc.iir.paraflow.commons.utils.DateUtil;
+import cn.edu.ruc.iir.paraflow.commons.utils.ParaFlowConfig;
 import com.google.common.collect.AbstractIterator;
 import io.airlift.tpch.Distributions;
 import io.airlift.tpch.GenerateUtils;
@@ -11,7 +15,9 @@ import io.airlift.tpch.RandomString;
 import io.airlift.tpch.RandomText;
 import io.airlift.tpch.TextPool;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
@@ -82,6 +88,7 @@ public class LineOrderGenerator
     private LineOrderGenerator(double scaleFactor, int part, int partCount, Distributions distributions, TextPool textPool,
                                long minCustomerKey, long numCustomerKey)
     {
+        System.out.println("Collector LineOrderGenerator Created");
         checkArgument(scaleFactor > 0, "scaleFactor must be greater than 0");
         checkArgument(part >= 1, "part must be at least 1");
         checkArgument(part <= partCount, "part must be less than or equal to part count");
@@ -173,6 +180,7 @@ public class LineOrderGenerator
     private static class LineOrderGeneratorIterator
             extends AbstractIterator<LineOrder>
     {
+        private final String tpchPath;
         private final RandomBoundedInt orderDateRandom = createOrderDateRandom();
         private final RandomBoundedInt lineCountRandom = createLineCountRandom();
 
@@ -214,10 +222,23 @@ public class LineOrderGenerator
         private int orderDate;
         private int lineCount;
         private int lineNumber;
+        private int indexMax;
+        ParaFlowConfig paraflowConfig = new ParaFlowConfig("collector.conf");
 
         private LineOrderGeneratorIterator(Distributions distributions, TextPool textPool, double scaleFactor,
                                            long startIndex, long rowCount, long minCustomerKey, long numCustomerKey)
         {
+            try {
+                this.paraflowConfig.build();
+            }
+            catch (ConfigFileNotFoundException e) {
+                e.printStackTrace();
+            }
+            this.tpchPath = paraflowConfig.getProperty("tpch.path");
+            this.indexMax = Integer.parseInt(paraflowConfig.getProperty("index.max"));
+            System.out.println("Collector Tpch Path:" + this.tpchPath);
+            System.out.println("Collector Index:" + this.indexMax);
+
             this.startIndex = startIndex;
             this.rowCount = rowCount;
 
@@ -309,7 +330,7 @@ public class LineOrderGenerator
             }
 
             index++;
-
+//            System.out.println("Collector Index[" + index + "]:" + lineorder.toLine());
             return lineorder;
         }
 
@@ -358,6 +379,24 @@ public class LineOrderGenerator
             String shipMode = shipModeRandom.nextValue();
             String orderComment = orderCommentRandom.nextValue();
             String lineitemComment = lineitemCommentRandom.nextValue();
+            long creation = System.currentTimeMillis();
+            // 创建条数, 时间
+            if (index > this.indexMax) {
+                System.out.println("Collector Exit:" + DateUtil.formatTime(new Date()));
+//                System.exit(-1);
+            }
+            else if ((index + 1) % 200 == 0) {
+                System.out.println("Collector Period:" + DateUtil.formatTime(new Date()));
+//                System.exit(-1);
+            }
+            String content = index + "," + creation + "\n";
+//            System.out.println(content);
+            try {
+                FileUtils.writeFile(content, this.tpchPath, true);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
 
             return new LineOrder(
                     index,
@@ -384,7 +423,7 @@ public class LineOrderGenerator
                     shipMode.getBytes(Charset.forName("UTF-8")),
                     lineitemComment.getBytes(Charset.forName("UTF-8")),
 //                    timeGenerationPool.nextTime());
-                    System.currentTimeMillis());
+                    creation);
         }
 
         private long generateCustomerKey()

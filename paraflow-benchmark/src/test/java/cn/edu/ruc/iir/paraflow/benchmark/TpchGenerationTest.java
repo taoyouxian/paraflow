@@ -4,12 +4,14 @@ import cn.edu.ruc.iir.paraflow.benchmark.model.Customer;
 import cn.edu.ruc.iir.paraflow.benchmark.model.LineOrder;
 import cn.edu.ruc.iir.paraflow.benchmark.model.Nation;
 import cn.edu.ruc.iir.paraflow.benchmark.model.Region;
+import cn.edu.ruc.iir.paraflow.commons.utils.BytesUtils;
 import org.junit.Test;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -165,5 +167,42 @@ public class TpchGenerationTest
             System.out.println("Generate " + counter + " messages in " + duration +
                     "ms (" + (1.0 * msgLen / duration) + " KB/s)");
         }
+    }
+
+    @Test
+    public void testTpchKey()
+    {
+        int part = 1;
+        Iterable<LineOrder> lineOrderIterable =
+                TpchTable.LINEORDER.createGenerator(126, part, 1, 0, 10000000);
+        Iterator<LineOrder> lineOrderIterator = lineOrderIterable.iterator();
+        int counter = 1;
+        LineOrder lineOrder = lineOrderIterator.next();
+        System.out.println(lineOrder.getLineOrderKey());
+        long maxLineOrderKey = 0;
+        StringBuilder sb = new StringBuilder();
+        while (lineOrderIterator.hasNext()) {
+            counter++;
+            LineOrder lineOrder1 = lineOrderIterator.next();
+            maxLineOrderKey = lineOrder1.getLineOrderKey();
+
+            long customerKey = lineOrder1.getCustomerKey();
+            byte[] bytes = BytesUtils.toBytes((int) customerKey);
+            int partition = getFiberId(bytes);
+            System.out.println("partition is:" + partition);
+            sb.append(partition + ",");
+            if (counter > 40) {
+                break;
+            }
+        }
+        System.out.println(sb.toString());
+        System.out.println(maxLineOrderKey);
+        System.out.println(counter);
+    }
+
+    public int getFiberId(byte[] key)
+    {
+        ByteBuffer buffer = ByteBuffer.wrap(key);
+        return buffer.getInt() % 320;
     }
 }

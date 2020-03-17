@@ -171,8 +171,9 @@ public class TestParquetWriter
                         "cn.edu.ruc.iir.paraflow.examples.collector.BasicParaflowFiberPartitioner",
                         Arrays.asList(names), Arrays.asList(types));
             }
-            if (!collector.existsTopic(dbName + "-" + tableName)) {
-                collector.createTopic(dbName + "-" + tableName, partitionNum, (short) 1);
+            String topic = dbName + "." + tableName;
+            if (!collector.existsTopic(topic)) {
+                collector.createTopic(topic, partitionNum, (short) 1);
             }
             TpchDataSource dataSource = new TpchDataSource(1, 1, 1, 0, 1_000_000);
             Message message = dataSource.read();
@@ -189,13 +190,13 @@ public class TestParquetWriter
             }
             ParaflowKafkaProducer producer = new ParaflowKafkaProducer(collectorConfig, 1000);
             ProducerRecord<byte[], byte[]> record =
-                    new ProducerRecord<>(dbName + "-" + tableName, 0, message.getTimestamp(),
+                    new ProducerRecord<>(topic, 0, message.getTimestamp(),
                             new byte[0], serialized);
             producer.sendMsg(record, serialized.length);
             producer.close();
 
             List<TopicPartition> topicPartitions = new ArrayList<>();
-            TopicPartition topicPartition = new TopicPartition(dbName + "-" + tableName, 0);
+            TopicPartition topicPartition = new TopicPartition(topic, 0);
             topicPartitions.add(topicPartition);
             ParaflowKafkaConsumer kafkaConsumer = new ParaflowKafkaConsumer(topicPartitions, loaderConfig.getProperties());
             Consumer<byte[], byte[]> consumer = kafkaConsumer.getConsumer();

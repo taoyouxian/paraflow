@@ -13,10 +13,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-clients</artifactId>
-        </dependency>
-        <dependency>
             <groupId>cn.edu.ruc.iir</groupId>
             <artifactId>paraflow-commons</artifactId>
         </dependency>
@@ -38,35 +34,50 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.10</artifactId>
+            <version>0.8.2.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <skip>${check.skip-checkstyle}</skip>
-                            <failOnViolation>${check.fail-checkstyle}</failOnViolation>
-                            <consoleOutput>true</consoleOutput>
-                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                            <configLocation>${project.parent.basedir}/src/checkstyles/checks.xml</configLocation>
-                            <sourceDirectories>
-                                <directory>${project.build.sourceDirectory}</directory>
-                            </sourceDirectories>
-                            <testSourceDirectories>
-                                <directory>${project.build.testSourceDirectory}</directory>
-                            </testSourceDirectories>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-checkstyle-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>validate</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>check</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <skip>${check.skip-checkstyle}</skip>-->
+<!--                            <failOnViolation>${check.fail-checkstyle}</failOnViolation>-->
+<!--                            <consoleOutput>true</consoleOutput>-->
+<!--                            <includeTestSourceDirectory>true</includeTestSourceDirectory>-->
+<!--                            <configLocation>${project.parent.basedir}/src/checkstyles/checks.xml</configLocation>-->
+<!--                            <sourceDirectories>-->
+<!--                                <directory>${project.build.sourceDirectory}</directory>-->
+<!--                            </sourceDirectories>-->
+<!--                            <testSourceDirectories>-->
+<!--                                <directory>${project.build.testSourceDirectory}</directory>-->
+<!--                            </testSourceDirectories>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 </project>

@@ -36,6 +36,8 @@ public abstract class TpchTable<E extends Model>
     {
         public Iterable<LineOrder> createGenerator(double scaleFactor, int part, int partCount, long minCustomerKey, long numCustomerKey)
         {
+            System.out.println("Collector Generator：scaleFactor#" + scaleFactor + ",part#" + part + ",partCount#" + partCount
+            + ",minCustomerKey#" + minCustomerKey + ",numCustomerKey#" + numCustomerKey);
             return new LineOrderGenerator(scaleFactor, part, partCount, minCustomerKey, numCustomerKey);
         }
     };

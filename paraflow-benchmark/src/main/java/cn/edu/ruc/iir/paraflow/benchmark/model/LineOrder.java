@@ -50,6 +50,31 @@ public class LineOrder
                 clerk, shipPriority, orderComment, lineNumber, quantity / 100.0d, extendedPrice / 100.0d, discount / 100.0d,
                 tax / 100.0d, returnFlag, lineStatus, shipDate, commitDate, receiptDate, shipInstructions, shipMode,
                 lineitemComment, creation};
+//        System.out.println("LineOrder{" +
+//                "lineOrderKey=" + lineOrderKey +
+//                ", customerKey=" + customerKey +
+//                ", orderStatus=" + new String(orderStatus) + "_" + new String(orderStatus).length() +
+//                ", totalPrice=" + totalPrice +
+//                ", orderDate=" + orderDate +
+//                ", orderPriority=" + new String(orderPriority) + "_" + new String(orderPriority).length() +
+//                ", clerk=" + new String(clerk) + "_" + new String(clerk).length() +
+//                ", shipPriority=" + shipPriority +
+//                ", orderComment=" + new String(orderComment) + "_" + new String(orderComment).length() +
+//                ", lineNumber=" + lineNumber +
+//                ", quantity=" + quantity +
+//                ", extendedPrice=" + extendedPrice +
+//                ", discount=" + discount +
+//                ", tax=" + tax +
+//                ", returnFlag=" + new String(returnFlag) + "_" + new String(returnFlag).length() +
+//                ", lineStatus=" + new String(lineStatus) + "_" + new String(lineStatus).length() +
+//                ", shipDate=" + shipDate +
+//                ", commitDate=" + commitDate +
+//                ", receiptDate=" + receiptDate +
+//                ", shipInstructions=" + new String(shipInstructions) + "_" + new String(shipInstructions).length() +
+//                ", shipMode=" + new String(shipMode) +  "_" + new String(shipMode).length() +
+//                ", lineitemComment=" + new String(lineitemComment) + "_" + new String(lineitemComment).length() +
+//                ", creation=" + creation +
+//                '}');
     }
 
     @Override
@@ -305,6 +330,110 @@ public class LineOrder
 
     public String toLine()
     {
+        return "LineOrder{" +
+                "lineOrderKey=" + values[0] +
+                ", customerKey=" + values[1] +
+                ", orderStatus=" + new String((byte[]) values[2]) +
+                ", totalPrice=" + values[3] +
+                ", orderDate=" + values[4] +
+                ", orderPriority=" + new String((byte[]) values[5]) +
+                ", clerk=" + new String((byte[]) values[6]) +
+                ", shipPriority=" + values[7] +
+                ", orderComment=" + new String((byte[]) values[8]) +
+                ", lineNumber=" + values[9] +
+                ", quantity=" + values[10] +
+                ", extendedPrice=" + values[11] +
+                ", discount=" + values[12] +
+                ", tax=" + values[13] +
+                ", returnFlag=" + new String((byte[]) values[14]) +
+                ", lineStatus=" + new String((byte[]) values[15]) +
+                ", shipDate=" + values[16] +
+                ", commitDate=" + values[17] +
+                ", receiptDate=" + values[18] +
+                ", shipInstructions=" + new String((byte[]) values[19]) +
+                ", shipMode=" + new String((byte[]) values[20]) +
+                ", lineitemComment=" + new String((byte[]) values[21]) +
+                ", creation=" + values[22] +
+                '}';
+    }
+
+    public Object getFiled(int index)
+    {
+        if (index == 0) {
+            return values[0];
+        }
+        else if (index == 1) {
+            return values[1];
+        }
+        else if (index == 2) {
+            return new String((byte[]) values[2]);
+        }
+        else if (index == 3) {
+            return values[3];
+        }
+        else if (index == 4) {
+            return values[4];
+        }
+        else if (index == 5) {
+            return new String((byte[]) values[5]);
+        }
+        else if (index == 6) {
+            return new String((byte[]) values[6]);
+        }
+        else if (index == 7) {
+            return values[7];
+        }
+        else if (index == 8) {
+            return new String((byte[]) values[8]);
+        }
+        else if (index == 9) {
+            return values[9];
+        }
+        else if (index == 10) {
+            return values[10];
+        }
+        else if (index == 11) {
+            return values[11];
+        }
+        else if (index == 12) {
+            return values[12];
+        }
+        else if (index == 13) {
+            return values[13];
+        }
+        else if (index == 14) {
+            return new String((byte[]) values[14]);
+        }
+        else if (index == 15) {
+            return new String((byte[]) values[15]);
+        }
+        else if (index == 16) {
+            return values[16];
+        }
+        else if (index == 17) {
+            return values[17];
+        }
+        else if (index == 18) {
+            return values[18];
+        }
+        else if (index == 19) {
+            return new String((byte[]) values[19]);
+        }
+        else if (index == 20) {
+            return new String((byte[]) values[20]);
+        }
+        else if (index == 21) {
+            return new String((byte[]) values[21]);
+        }
+        else if (index == 22) {
+            return values[22];
+        }
+        try {
+            throw new Exception("Error Field.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return "";
     }
 }
